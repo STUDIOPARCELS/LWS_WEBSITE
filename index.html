@@ -25,7 +25,7 @@
   --intro-label-size: 10px;
   --intro-top-space: 24px;
   --intro-gap: 72px;
-  --intro-image-width: 100%;
+  --intro-image-width: 76%;
   --sentence-size: 16px;
   --module-text-size: 14px;
   --photo-caption-size: 10px;
@@ -358,9 +358,9 @@ h3 {
   margin-bottom: clamp(72px, 10vw, 150px);
 }
 .intro-head {
-  grid-template-columns: minmax(280px,.48fr) minmax(520px,1.28fr);
+  grid-template-columns: minmax(280px,.56fr) minmax(420px,.9fr);
   align-items: center;
-  gap: var(--intro-gap);
+  gap: clamp(84px, 12vw, 180px);
   margin-bottom: 0;
 }
 .intro-copy {
@@ -368,7 +368,7 @@ h3 {
 }
 .intro-media img {
   width: var(--intro-image-width);
-  max-height: 82svh;
+  max-height: min(58svh, 620px);
   object-fit: contain;
   margin: 0 auto;
 }
@@ -971,8 +971,8 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
     </label>
     <label class="control-row">
       <span>Image</span>
-      <input type="range" min="70" max="110" step="1" value="100" data-style-var="--intro-image-width" data-unit="%">
-      <output>100%</output>
+      <input type="range" min="45" max="100" step="1" value="76" data-style-var="--intro-image-width" data-unit="%">
+      <output>76%</output>
     </label>
     <p class="control-group">Global Colors</p>
     <label class="color-row">
@@ -1482,6 +1482,10 @@ if (styleSettings["--intro-top-space"] === "46") {
 }
 if (Number(styleSettings["--section-title-size"]) > 24) {
   styleSettings["--section-title-size"] = "20";
+  saveStorage(STYLE_STORAGE_KEY, styleSettings);
+}
+if (Number(styleSettings["--intro-image-width"]) > 76) {
+  styleSettings["--intro-image-width"] = "76";
   saveStorage(STYLE_STORAGE_KEY, styleSettings);
 }
 const styleControls = [...document.querySelectorAll("[data-style-var]")];
