@@ -411,11 +411,27 @@ h3 {
 .field-map-card {
   margin: 0;
 }
+.field-map-trigger {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: zoom-in;
+  text-align: inherit;
+}
 .field-map-frame {
   padding: clamp(8px, 1vw, 14px);
   background: var(--paper);
   border-radius: 76px 0 76px 0;
   box-shadow: 0 20px 48px rgba(0,0,0,.18);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.field-map-trigger:hover .field-map-frame,
+.field-map-trigger:focus-visible .field-map-frame {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 58px rgba(0,0,0,.2);
 }
 .field-map-frame img {
   width: 100%;
@@ -424,6 +440,76 @@ h3 {
 }
 .field-map-card .photo-caption {
   margin-top: 22px;
+}
+.site-media-dialog {
+  width: min(1120px, calc(100vw - 40px));
+  max-height: calc(100svh - 40px);
+  border: 0;
+  padding: clamp(24px, 4vw, 56px);
+  background: var(--paper);
+  color: var(--ink);
+  overflow: auto;
+}
+.site-media-dialog::backdrop {
+  background: rgba(255,255,255,.9);
+}
+.site-media-dialog[open] {
+  display: block;
+}
+.site-media-head {
+  display: grid;
+  grid-template-columns: minmax(240px,.7fr) minmax(0,1fr);
+  gap: clamp(28px, 5vw, 72px);
+  margin-bottom: clamp(28px, 4vw, 52px);
+}
+.site-media-grid {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: clamp(18px, 2.8vw, 34px);
+}
+.site-media-card {
+  min-height: clamp(260px, 30vw, 440px);
+  display: grid;
+  grid-template-rows: minmax(0,1fr) auto;
+  gap: 14px;
+  padding: clamp(14px, 2vw, 24px);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--paper);
+}
+.site-media-card.wide {
+  grid-column: 1 / -1;
+  min-height: clamp(300px, 42vw, 620px);
+}
+.site-media-card img,
+.site-media-card video {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  background: #f8f8f8;
+}
+.site-media-card video {
+  max-height: min(58svh, 620px);
+}
+.site-media-file {
+  min-height: clamp(240px, 26vw, 380px);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  border: 1px solid var(--line);
+  background: #f8f8f8;
+  text-align: center;
+}
+.site-media-file span {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: var(--module-text-size);
+  line-height: 1.55;
+  font-weight: 300;
+  text-transform: none;
+  letter-spacing: 0;
 }
 .text-block {
   border-top: 1px solid var(--line);
@@ -918,6 +1004,9 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   .hero, .section-head, .image-row, .commission-feature, .winterblue-feature { grid-template-columns: 1fr; }
   .intro-head { grid-template-columns: 1fr; }
   .field-map-grid { grid-template-columns: 1fr; }
+  .site-media-head,
+  .site-media-grid { grid-template-columns: 1fr; }
+  .site-media-card.wide { grid-column: auto; }
   .hero-media img { max-height: none; }
   .winterblue-copy,
   .winterblue-studies,
@@ -1177,15 +1266,19 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       </div>
       <div class="field-map-grid" aria-label="Field site maps">
         <figure class="field-map-card">
-          <div class="field-map-frame">
-            <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS%20MAPS.jpg" alt="Map showing The Observatory and Craters of the Moon National Monument." loading="lazy">
-          </div>
+          <button class="field-map-trigger" type="button" data-site-media-trigger aria-label="Open field site media">
+            <div class="field-map-frame">
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS%20MAPS.jpg" alt="Map showing The Observatory and Craters of the Moon National Monument." loading="lazy">
+            </div>
+          </button>
           <figcaption class="photo-caption">CRATERS OF THE MOON - THE OBSERVATORY</figcaption>
         </figure>
         <figure class="field-map-card">
-          <div class="field-map-frame">
-            <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CAMAS%20PRAIRIE.png" alt="Map showing The Observatory and the Camas Prairie." loading="lazy">
-          </div>
+          <button class="field-map-trigger" type="button" data-site-media-trigger aria-label="Open Camas Prairie field site media">
+            <div class="field-map-frame">
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CAMAS%20PRAIRIE.png" alt="Map showing The Observatory and the Camas Prairie." loading="lazy">
+            </div>
+          </button>
           <figcaption class="photo-caption">CAMAS PRAIRIE - WINTERBLUE FIELD SITE</figcaption>
         </figure>
       </div>
@@ -1561,6 +1654,35 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
     <img src="" alt="" data-lightbox-image>
     <figcaption class="photo-caption" data-lightbox-caption></figcaption>
   </figure>
+</dialog>
+<dialog class="site-media-dialog" data-site-media-dialog aria-label="Winterblue field site media">
+  <div class="site-media-head">
+    <div class="stack">
+      <p class="eyebrow">CAMAS PRAIRIE FIELD SITE</p>
+      <h2 class="split-title">
+        <span class="line">WINTERBLUE</span>
+        <span class="line"><span class="soft">SITE MEDIA</span></span>
+      </h2>
+    </div>
+    <p class="sentence">Field images and video from the Camas Prairie, shown as the winter counterpart to Craters of the Moon.</p>
+  </div>
+  <div class="site-media-grid" aria-label="Winterblue site media">
+    <figure class="site-media-card">
+      <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/File_006.png" alt="Winterblue field site image from the Camas Prairie." loading="lazy">
+      <figcaption class="photo-caption">WINTERBLUE FIELD SITE</figcaption>
+    </figure>
+    <a class="site-media-card" href="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/IMG_4962.HEIC" target="_blank" rel="noopener" aria-label="Open Winterblue HEIC field image">
+      <span class="site-media-file">
+        <span class="bento-label">HEIC FIELD IMAGE</span>
+        <span>IMG_4962.HEIC</span>
+      </span>
+      <span class="photo-caption">OPEN FIELD IMAGE</span>
+    </a>
+    <figure class="site-media-card wide">
+      <video src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/WINTERBLUE%20I_1.mp4" controls playsinline preload="metadata"></video>
+      <figcaption class="photo-caption">WINTERBLUE I - FIELD VIDEO</figcaption>
+    </figure>
+  </div>
 </dialog>
 <script type="module">
 const EDIT_STORAGE_KEY = "observatory-content-preview-inline-edits-v4";
@@ -2213,6 +2335,7 @@ if (!editorEnabled) {
 const lightbox = document.querySelector("[data-lightbox]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxCaption = document.querySelector("[data-lightbox-caption]");
+const siteMediaDialog = document.querySelector("[data-site-media-dialog]");
 
 function closeLightbox() {
   if (!lightbox?.open) return;
@@ -2234,6 +2357,16 @@ document.querySelectorAll("[data-lightbox-trigger]").forEach((button) => {
 
 lightbox?.addEventListener("click", (event) => {
   closeLightbox();
+});
+
+document.querySelectorAll("[data-site-media-trigger]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!siteMediaDialog?.open) siteMediaDialog?.showModal();
+  });
+});
+
+siteMediaDialog?.addEventListener("click", (event) => {
+  if (event.target === siteMediaDialog) siteMediaDialog.close();
 });
 
 const exportButton = document.querySelector("[data-export-edits]");
