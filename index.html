@@ -584,8 +584,12 @@ h3 {
   grid-template-columns: repeat(3,minmax(0,1fr));
   align-items: start;
   width: min(100%, 940px);
-  margin: clamp(112px, 14vw, 220px) auto 0;
+  margin: 0 auto;
   gap: clamp(76px, 9vw, 150px) clamp(28px, 4vw, 64px);
+}
+.craters-gallery-heading {
+  width: min(100%, 940px);
+  margin: clamp(112px, 14vw, 220px) auto clamp(26px, 4vw, 52px);
 }
 .craters-gallery .gallery-item:nth-child(-n+3) img {
   width: 100%;
@@ -1107,9 +1111,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
           <details open>
             <summary>Work Details</summary>
             <p>Four commissioned works from Craters, Surface Surveys (2018) bring the volcanic ground of Central Idaho into the Observatory through aerial studies of basalt, cooled surface, fissure, pressure, and mineral memory.</p>
-            <div class="module-actions">
-              <a class="cta" href="#craters-gallery">VIEW PHOTOGRAPHS</a>
-            </div>
           </details>
           <details>
             <summary>Materials + Fabrication</summary>
@@ -1122,6 +1123,9 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
           </button>
           <figcaption class="photo-caption">MAIN LEVEL - GM WALL 52.5" X 79"</figcaption>
         </figure>
+      </div>
+      <div class="craters-gallery-heading">
+        <p class="eyebrow">PHOTOGRAPHS</p>
       </div>
       <div class="gallery craters-gallery" id="craters-gallery">
         <article class="gallery-item">
