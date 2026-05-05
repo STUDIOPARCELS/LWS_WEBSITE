@@ -599,6 +599,8 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   bottom: clamp(18px, 3vw, 34px);
   z-index: 30;
   width: min(320px, calc(100vw - 36px));
+  max-height: calc(100svh - 36px);
+  overflow-y: auto;
   padding: 14px 16px 16px;
   border: 1px solid var(--line);
   background: var(--panel-bg);
@@ -607,8 +609,8 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   transition: transform .2s ease, opacity .2s ease;
 }
 .editor-panel:not(:hover):not(:focus-within) {
-  transform: translateX(calc(100% - 34px));
-  opacity: .86;
+  transform: none;
+  opacity: 1;
 }
 .editor-panel details {
   border: 0;
@@ -618,10 +620,10 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   margin-bottom: 14px;
 }
 .editor-panel:not(:hover):not(:focus-within) summary {
-  min-height: 136px;
-  margin: 0;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  min-height: 0;
+  margin-bottom: 14px;
+  writing-mode: horizontal-tb;
+  transform: none;
 }
 .control-group {
   margin-top: 16px;
@@ -649,8 +651,38 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   margin-top: 0;
   text-align: left;
 }
+.active-tools {
+  position: sticky;
+  top: -14px;
+  z-index: 1;
+  margin: 0 -16px 0;
+  padding: 0 16px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-bg);
+  backdrop-filter: saturate(180%) blur(22px);
+}
+.active-target {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 300;
+}
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.quick-actions .editor-action {
+  margin-top: 10px;
+}
+.editable-active {
+  background: rgba(0,0,0,.035) !important;
+  box-shadow: inset 0 -1px 0 var(--ink) !important;
+}
 .editor-action {
   display: inline-flex;
+  margin-right: 12px;
   margin-top: 14px;
   border: 0;
   border-bottom: 1px solid currentColor;
@@ -766,7 +798,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
 </head>
 <body>
 <aside class="editor-panel" aria-label="Preview controls">
-  <details>
+  <details open>
     <summary>Preview Controls</summary>
     <p class="control-group">Section Edit</p>
     <div class="section-jump" aria-label="Jump to section">
@@ -777,6 +809,26 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       <button class="editor-action" type="button" data-jump-section="#practice">Practice</button>
       <button class="editor-action" type="button" data-jump-section="#luxuriate">Luxuriate</button>
       <button class="editor-action" type="button" data-jump-section="#surface-surveys">Surface Surveys</button>
+    </div>
+    <div class="active-tools">
+      <p class="control-group">Active Text</p>
+      <p class="active-target" data-active-target>Click a paragraph, heading, label, or note.</p>
+      <label class="control-row">
+        <span>Size</span>
+        <input type="range" min="8" max="72" step="1" value="16" data-active-size disabled>
+        <output>16px</output>
+      </label>
+      <div class="quick-actions" aria-label="Active text tools">
+        <button class="editor-action" type="button" data-active-size-step="-2" disabled>Smaller</button>
+        <button class="editor-action" type="button" data-active-size-step="2" disabled>Larger</button>
+        <button class="editor-action" type="button" data-active-bold disabled>Bold</button>
+        <button class="editor-action" type="button" data-active-italic disabled>Italic</button>
+        <button class="editor-action" type="button" data-active-clear disabled>Clear</button>
+      </div>
+      <label class="color-row">
+        <span>Color</span>
+        <input type="color" value="#111111" data-active-color disabled>
+      </label>
     </div>
     <p class="control-group">Hero Type</p>
     <label class="control-row">
@@ -1247,6 +1299,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
 <script type="module">
 const EDIT_STORAGE_KEY = "observatory-content-preview-inline-edits-v4";
 const STYLE_STORAGE_KEY = "observatory-content-preview-style-v1";
+const ELEMENT_STYLE_STORAGE_KEY = "observatory-content-preview-element-style-v1";
 const IMAGE_STORAGE_KEY = "observatory-content-preview-images-v1";
 const HERO_LOCK_STORAGE_KEY = "observatory-content-preview-hero-lock-v1";
 const CONTENT_LOCK_STORAGE_KEY = "observatory-content-preview-content-lock-v1";
@@ -1264,6 +1317,7 @@ const editorEnabled = urlParams.has("edit") || ["localhost", "127.0.0.1"].includ
 const storageKeys = [
   EDIT_STORAGE_KEY,
   STYLE_STORAGE_KEY,
+  ELEMENT_STYLE_STORAGE_KEY,
   IMAGE_STORAGE_KEY,
   HERO_LOCK_STORAGE_KEY,
   CONTENT_LOCK_STORAGE_KEY
@@ -1313,6 +1367,7 @@ async function importLatestSnapshotIfRequested() {
     const snapshot = await response.json();
     if (snapshot.inlineEdits) saveStorage(EDIT_STORAGE_KEY, snapshot.inlineEdits);
     if (snapshot.styleSettings) saveStorage(STYLE_STORAGE_KEY, snapshot.styleSettings);
+    if (snapshot.elementStyleSettings) saveStorage(ELEMENT_STYLE_STORAGE_KEY, snapshot.elementStyleSettings);
     if (snapshot.imageSettings) saveStorage(IMAGE_STORAGE_KEY, snapshot.imageSettings);
     if (typeof snapshot.heroLocked === "boolean") {
       localStorage.setItem(HERO_LOCK_STORAGE_KEY, snapshot.heroLocked ? "true" : "false");
@@ -1346,6 +1401,12 @@ if (Number(styleSettings["--section-title-size"]) > 24) {
 const styleControls = [...document.querySelectorAll("[data-style-var]")];
 const colorControls = [...document.querySelectorAll("[data-color-var]")];
 const sectionJumpButtons = [...document.querySelectorAll("[data-jump-section]")];
+const activeTarget = document.querySelector("[data-active-target]");
+const activeSizeInput = document.querySelector("[data-active-size]");
+const activeColorInput = document.querySelector("[data-active-color]");
+const activeStyleButtons = [
+  ...document.querySelectorAll("[data-active-size-step], [data-active-bold], [data-active-italic], [data-active-clear]")
+];
 const saveStatus = document.querySelector("[data-save-status]");
 let snapshotTimer;
 
@@ -1361,6 +1422,7 @@ function collectSnapshot() {
     location: window.location.href,
     inlineEdits: readStorage(EDIT_STORAGE_KEY),
     styleSettings: readStorage(STYLE_STORAGE_KEY),
+    elementStyleSettings: readStorage(ELEMENT_STYLE_STORAGE_KEY),
     imageSettings: readStorage(IMAGE_STORAGE_KEY),
     heroLocked: heroIsLocked(),
     contentLocked: contentIsLocked()
@@ -1551,6 +1613,8 @@ if (!localStorage.getItem(CRATERS_SECTION_RESET_KEY)) {
 const editables = [...document.querySelectorAll(editableSelector)]
   .filter((el) => !el.closest("nav") && !el.closest(".actions") && !el.closest(".editor-panel"));
 const contentLockButton = document.querySelector("[data-lock-copy]");
+const elementStyleSettings = readStorage(ELEMENT_STYLE_STORAGE_KEY);
+let activeEditable = null;
 
 function slugText(value) {
   return value
@@ -1569,6 +1633,79 @@ function stableEditableKey(el, index) {
   const className = [...el.classList].filter((name) => !name.startsWith("editable")).join("-");
   const textKey = slugText(el.textContent || "");
   return [section, tag, className, textKey || index].filter(Boolean).join("-");
+}
+
+function rgbToHex(value) {
+  const parts = value.match(/\d+/g)?.slice(0, 3).map(Number);
+  if (!parts || parts.length < 3) return "#111111";
+  return `#${parts.map((part) => part.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function editableLabel(el) {
+  const section = el.closest("section")?.id || "hero";
+  const kind = el.matches("h1,h2,h3") ? "heading" : el.matches(".eyebrow,summary") ? "label" : "paragraph";
+  return `${section.replace(/-/g, " ")} ${kind}`;
+}
+
+function getEditableKey(el) {
+  return el?.dataset?.editId;
+}
+
+function saveElementStyles() {
+  saveStorage(ELEMENT_STYLE_STORAGE_KEY, elementStyleSettings);
+  saveSnapshotToServer();
+}
+
+function applyElementStyle(el) {
+  const styles = elementStyleSettings[getEditableKey(el)];
+  if (!styles) return;
+  if (styles.fontSize) el.style.fontSize = styles.fontSize;
+  if (styles.color) el.style.color = styles.color;
+  if (styles.fontWeight) el.style.fontWeight = styles.fontWeight;
+  if (styles.fontStyle) el.style.fontStyle = styles.fontStyle;
+}
+
+function setActiveControlsEnabled(enabled) {
+  if (activeSizeInput) activeSizeInput.disabled = !enabled;
+  if (activeColorInput) activeColorInput.disabled = !enabled;
+  activeStyleButtons.forEach((button) => {
+    button.disabled = !enabled;
+  });
+}
+
+function syncActiveControls() {
+  if (!activeEditable || !activeSizeInput) return;
+  const computed = window.getComputedStyle(activeEditable);
+  const fontSize = Math.round(parseFloat(computed.fontSize) || 16);
+  activeSizeInput.value = String(Math.min(Number(activeSizeInput.max), Math.max(Number(activeSizeInput.min), fontSize)));
+  const output = activeSizeInput.closest(".control-row")?.querySelector("output");
+  if (output) output.textContent = `${activeSizeInput.value}px`;
+  if (activeColorInput) activeColorInput.value = rgbToHex(computed.color);
+}
+
+function setActiveEditable(el) {
+  if (!editorEnabled || !el) return;
+  activeEditable?.classList.remove("editable-active");
+  activeEditable = el;
+  activeEditable.classList.add("editable-active");
+  if (activeTarget) activeTarget.textContent = `Editing: ${editableLabel(el)}`;
+  setActiveControlsEnabled(true);
+  syncActiveControls();
+}
+
+function updateActiveStyle(styles, message = "Active text style saved") {
+  if (!activeEditable) {
+    markSaved("Click text first");
+    return;
+  }
+
+  const key = getEditableKey(activeEditable);
+  elementStyleSettings[key] = { ...(elementStyleSettings[key] || {}), ...styles };
+  Object.entries(styles).forEach(([property, value]) => {
+    activeEditable.style[property] = value;
+  });
+  saveElementStyles();
+  markSaved(message);
 }
 
 function contentIsLocked() {
@@ -1610,9 +1747,78 @@ editables.forEach((el, index) => {
   }
   el.setAttribute("contenteditable", editorEnabled ? "true" : "false");
   el.setAttribute("spellcheck", "true");
+  applyElementStyle(el);
+  el.addEventListener("focus", () => {
+    setActiveEditable(el);
+  });
+  el.addEventListener("click", () => {
+    setActiveEditable(el);
+  });
   el.addEventListener("input", () => {
     saveEditableElement(el);
   });
+});
+
+setActiveControlsEnabled(false);
+
+if (activeSizeInput) {
+  activeSizeInput.addEventListener("input", () => {
+    const output = activeSizeInput.closest(".control-row")?.querySelector("output");
+    if (output) output.textContent = `${activeSizeInput.value}px`;
+    updateActiveStyle({ fontSize: `${activeSizeInput.value}px` }, "Active text size saved");
+  });
+}
+
+document.querySelectorAll("[data-active-size-step]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!activeEditable || !activeSizeInput) {
+      markSaved("Click text first");
+      return;
+    }
+    const step = Number(button.dataset.activeSizeStep);
+    const current = Number(activeSizeInput.value);
+    const next = Math.min(Number(activeSizeInput.max), Math.max(Number(activeSizeInput.min), current + step));
+    activeSizeInput.value = String(next);
+    activeSizeInput.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+});
+
+if (activeColorInput) {
+  activeColorInput.addEventListener("input", () => {
+    updateActiveStyle({ color: activeColorInput.value }, "Active text color saved");
+  });
+}
+
+document.querySelector("[data-active-bold]")?.addEventListener("click", () => {
+  if (!activeEditable) {
+    markSaved("Click text first");
+    return;
+  }
+  const current = window.getComputedStyle(activeEditable).fontWeight;
+  updateActiveStyle({ fontWeight: Number(current) >= 600 ? "" : "600" }, "Active text weight saved");
+});
+
+document.querySelector("[data-active-italic]")?.addEventListener("click", () => {
+  if (!activeEditable) {
+    markSaved("Click text first");
+    return;
+  }
+  const current = window.getComputedStyle(activeEditable).fontStyle;
+  updateActiveStyle({ fontStyle: current === "italic" ? "" : "italic" }, "Active text italic saved");
+});
+
+document.querySelector("[data-active-clear]")?.addEventListener("click", () => {
+  if (!activeEditable) {
+    markSaved("Click text first");
+    return;
+  }
+  delete elementStyleSettings[getEditableKey(activeEditable)];
+  ["fontSize", "color", "fontWeight", "fontStyle"].forEach((property) => {
+    activeEditable.style[property] = "";
+  });
+  saveElementStyles();
+  syncActiveControls();
+  markSaved("Active text style cleared");
 });
 
 if (contentLockButton) {
