@@ -372,6 +372,32 @@ h3 {
   object-fit: contain;
   margin: 0 auto;
 }
+.field-sites-copy {
+  max-width: 620px;
+}
+.field-map-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: clamp(56px, 7vw, 112px);
+  align-items: start;
+}
+.field-map-card {
+  margin: 0;
+}
+.field-map-frame {
+  padding: clamp(8px, 1vw, 14px);
+  background: var(--paper);
+  border-radius: 76px 0 76px 0;
+  box-shadow: 0 20px 48px rgba(0,0,0,.18);
+}
+.field-map-frame img {
+  width: 100%;
+  border-radius: 64px 0 64px 0;
+  object-fit: contain;
+}
+.field-map-card .photo-caption {
+  margin-top: 22px;
+}
 .text-block {
   border-top: 1px solid var(--line);
   padding-top: 18px;
@@ -858,6 +884,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
 @media (max-width: 980px) {
   .hero, .section-head, .image-row, .commission-feature, .winterblue-feature { grid-template-columns: 1fr; }
   .intro-head { grid-template-columns: 1fr; }
+  .field-map-grid { grid-template-columns: 1fr; }
   .hero-media img { max-height: none; }
   .winterblue-copy,
   .winterblue-studies,
@@ -902,6 +929,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
     <div class="section-jump" aria-label="Jump to section">
       <button class="editor-action" type="button" data-jump-section="#top">Hero</button>
       <button class="editor-action" type="button" data-jump-section="#intro">Intro</button>
+      <button class="editor-action" type="button" data-jump-section="#field-sites">Field Sites</button>
       <button class="editor-action" type="button" data-jump-section="#commission">Craters</button>
       <button class="editor-action" type="button" data-jump-section="#winterblue">Winterblue</button>
       <button class="editor-action" type="button" data-jump-section="#practice">Practice</button>
@@ -1042,6 +1070,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   <a class="brand" href="#top">Lisa Wood Studio</a>
   <nav class="nav-links" aria-label="Sections">
     <a href="#commission">Commission</a>
+    <a href="#field-sites">Field Sites</a>
     <a href="#practice">Practice</a>
     <a href="#luxuriate">Luxuriate</a>
     <a href="#surface-surveys">Surface Surveys</a>
@@ -1062,7 +1091,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       </details>
       <div class="actions">
         <a class="cta" href="#commission">VIEW COMMISSION</a>
-        <a class="cta secondary" href="#intro">EXPLORE FIELD SITES</a>
+        <a class="cta secondary" href="#field-sites">EXPLORE FIELD SITES</a>
       </div>
     </div>
     <figure class="hero-media">
@@ -1085,6 +1114,42 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
         </div>
         <figure class="intro-media">
           <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/IMG_0853.JPEG" alt="Winterblue field image from the Camas Prairie before dawn." loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="field-sites">
+    <div class="inner">
+      <div class="section-head">
+        <div class="stack field-sites-copy">
+          <p class="eyebrow">FIELD SITES</p>
+          <h2 class="split-title">
+            <span class="line">CRATERS OF THE MOON</span>
+            <span class="line">AND <span class="soft">CAMAS PRAIRIE</span></span>
+          </h2>
+        </div>
+        <div class="stack">
+          <p class="sentence">The commission links two Central Idaho field sites: the volcanic surface of Craters of the Moon National Monument and the winter expanse of the Camas Prairie before dawn.</p>
+          <div class="text-block">
+            <p class="text-block-title">Winterblue</p>
+            <p>Winterblue is drawn from repeated pre-dawn returns to the Camas Prairie. The project turns winter darkness, cold, distance, and emotional exposure into a record of sustained looking.</p>
+            <p>The Camas Prairie becomes the counterpoint to Craters: a horizontal winter field set against volcanic ground, both held within the regional landscape surrounding The Observatory Sun Valley.</p>
+          </div>
+        </div>
+      </div>
+      <div class="field-map-grid" aria-label="Field site maps">
+        <figure class="field-map-card">
+          <div class="field-map-frame">
+            <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS%20MAPS.jpg" alt="Map showing The Observatory and Craters of the Moon National Monument." loading="lazy">
+          </div>
+          <figcaption class="photo-caption">CRATERS OF THE MOON - THE OBSERVATORY</figcaption>
+        </figure>
+        <figure class="field-map-card">
+          <div class="field-map-frame">
+            <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CAMAS%20PRAIRIE.png" alt="Map showing The Observatory and the Camas Prairie." loading="lazy">
+          </div>
+          <figcaption class="photo-caption">CAMAS PRAIRIE - WINTERBLUE FIELD SITE</figcaption>
         </figure>
       </div>
     </div>
