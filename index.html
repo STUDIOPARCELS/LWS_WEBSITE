@@ -22,7 +22,6 @@
   --hero-label-size: 10px;
   --section-title-size: 20px;
   --intro-title-size: var(--section-title-size);
-  --intro-body-size: 14px;
   --intro-label-size: 10px;
   --intro-top-space: 24px;
   --intro-gap: 72px;
@@ -393,8 +392,8 @@ h3 {
 .text-block p:not(.text-block-title) {
   margin-top: 16px;
   color: var(--muted);
-  font-size: var(--intro-body-size);
-  line-height: 1.68;
+  font-size: var(--module-text-size);
+  line-height: 1.76;
   font-weight: 300;
 }
 .text-block p:not(.text-block-title):first-child {
@@ -890,11 +889,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       <span>Title</span>
       <input type="range" min="12" max="32" step="1" value="20" data-style-var="--section-title-size">
       <output>20px</output>
-    </label>
-    <label class="control-row">
-      <span>Body</span>
-      <input type="range" min="11" max="20" step="1" value="14" data-style-var="--intro-body-size">
-      <output>14px</output>
     </label>
     <label class="control-row">
       <span>Label</span>
