@@ -386,10 +386,21 @@ h3 {
   max-width: 620px;
 }
 #field-sites .section-head > .stack:last-child {
-  gap: 10px;
+  gap: 6px;
 }
 #field-sites .text-block {
-  padding-top: 14px;
+  border-top: 0;
+  padding-top: 0;
+}
+#field-sites .text-block p:not(.text-block-title) {
+  margin-top: 8px;
+  line-height: 1.62;
+}
+#field-sites .text-block p:not(.text-block-title) + p:not(.text-block-title) {
+  margin-top: 10px;
+}
+#field-sites .section-head {
+  margin-bottom: clamp(44px, 6vw, 86px);
 }
 .field-map-grid {
   display: grid;
@@ -453,13 +464,32 @@ h3 {
 }
 .commission-meta {
   display: grid;
-  gap: 18px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   margin-top: 2px;
   margin-bottom: 8px;
 }
-.commission-meta .sentence {
-  max-width: 520px;
-  font-size: 14px;
+.commission-meta-row {
+  display: grid;
+  grid-template-columns: minmax(130px,.36fr) minmax(0,1fr);
+  gap: clamp(18px, 3vw, 42px);
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.commission-meta-row:first-child {
+  border-top: 0;
+}
+.commission-meta-label {
+  color: var(--muted);
+  font-size: var(--label-size);
+  line-height: 1.3;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.commission-meta-value {
+  color: var(--ink);
+  font-size: var(--module-text-size);
   line-height: 1.5;
   font-weight: 300;
 }
@@ -683,6 +713,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   padding: clamp(28px, 5vw, 84px);
   background: var(--paper);
   color: var(--ink);
+  cursor: pointer;
 }
 .image-lightbox::backdrop {
   background: rgba(255,255,255,.96);
@@ -705,20 +736,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   max-width: 100%;
   max-height: calc(100svh - 190px);
   object-fit: contain;
-}
-.lightbox-close {
-  position: fixed;
-  top: clamp(18px, 3vw, 42px);
-  right: clamp(18px, 3vw, 42px);
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  padding: 0 0 8px;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  font: 600 var(--label-size)/1.3 inherit;
-  letter-spacing: .18em;
-  text-transform: uppercase;
 }
 .editable-ready [contenteditable="true"] {
   outline: none;
@@ -929,6 +946,10 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   .modules { grid-template-columns: 1fr; }
   h1 { font-size: clamp(34px, 10vw, 48px); }
   h2 { font-size: var(--section-title-size); }
+  .commission-meta-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
   .editor-panel {
     left: 14px;
     right: 14px;
@@ -1149,7 +1170,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
         <div class="stack">
           <p class="sentence">The commission links two Central Idaho field sites: the volcanic surface of Craters of the Moon National Monument and the winter expanse of the Camas Prairie before dawn.</p>
           <div class="text-block">
-            <p class="text-block-title">Winterblue</p>
             <p>Winterblue is drawn from repeated pre-dawn returns to the Camas Prairie. The project turns winter darkness, cold, distance, and emotional exposure into a record of sustained looking.</p>
             <p>The Camas Prairie becomes the counterpoint to Craters: a horizontal winter field set against volcanic ground, both held within the regional landscape surrounding The Observatory Sun Valley.</p>
           </div>
@@ -1182,8 +1202,14 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
             <span class="line">(2018)</span>
           </h2>
           <div class="commission-meta">
-            <p class="sentence">Craters of the Moon Lava Field, Idaho, USA</p>
-            <p class="sentence">Protected as a U.S. National Monument: 1924</p>
+            <div class="commission-meta-row">
+              <span class="commission-meta-label">Field Site</span>
+              <span class="commission-meta-value">Craters of the Moon Lava Field, Idaho, USA</span>
+            </div>
+            <div class="commission-meta-row">
+              <span class="commission-meta-label">Designation</span>
+              <span class="commission-meta-value">Protected as a U.S. National Monument: 1924</span>
+            </div>
           </div>
           <details open>
             <summary>Field Site Context</summary>
@@ -1531,7 +1557,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   </section>
 </main>
 <dialog class="image-lightbox" data-lightbox aria-label="Image preview">
-  <button class="lightbox-close" type="button" data-lightbox-close>Close</button>
   <figure>
     <img src="" alt="" data-lightbox-image>
     <figcaption class="photo-caption" data-lightbox-caption></figcaption>
@@ -2188,7 +2213,6 @@ if (!editorEnabled) {
 const lightbox = document.querySelector("[data-lightbox]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxCaption = document.querySelector("[data-lightbox-caption]");
-const lightboxClose = document.querySelector("[data-lightbox-close]");
 
 function closeLightbox() {
   if (!lightbox?.open) return;
@@ -2208,9 +2232,8 @@ document.querySelectorAll("[data-lightbox-trigger]").forEach((button) => {
   });
 });
 
-lightboxClose?.addEventListener("click", closeLightbox);
 lightbox?.addEventListener("click", (event) => {
-  if (event.target === lightbox) closeLightbox();
+  closeLightbox();
 });
 
 const exportButton = document.querySelector("[data-export-edits]");
