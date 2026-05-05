@@ -493,7 +493,6 @@ h3 {
   max-width: 560px;
 }
 .winterblue-side-note {
-  margin-top: clamp(64px, 10vw, 148px);
   border-top: 1px solid var(--line);
   padding-top: 14px;
 }
@@ -508,9 +507,13 @@ h3 {
 }
 .winterblue-notes {
   grid-column: 1 / -1;
-  grid-row: 2;
+  grid-row: 3;
   align-self: start;
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(260px,.42fr) minmax(0,1.1fr);
+  column-gap: clamp(44px, 7vw, 104px);
+  row-gap: clamp(28px, 4vw, 56px);
+  margin-top: clamp(42px, 6vw, 90px);
 }
 .winterblue-notes details {
   padding: 18px 0;
@@ -526,13 +529,30 @@ h3 {
   text-transform: none;
 }
 .winterblue-notes details + details {
-  margin-top: 6px;
+  margin-top: 0;
 }
-.winterblue-media {
+.winterblue-studies {
   grid-column: 2;
   grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: clamp(12px, 1.5vw, 22px);
   width: 100%;
-  margin-top: 0;
+}
+.winterblue-study {
+  margin: 0;
+}
+.winterblue-study img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+.winterblue-media {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
+  max-width: 1120px;
+  margin: clamp(52px, 7vw, 104px) auto 0;
 }
 .winterblue-media img {
   width: 100%;
@@ -835,6 +855,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   .intro-head { grid-template-columns: 1fr; }
   .hero-media img { max-height: none; }
   .winterblue-copy,
+  .winterblue-studies,
   .winterblue-media,
   .winterblue-notes {
     grid-column: auto;
@@ -842,9 +863,6 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   }
   .winterblue-notes {
     grid-template-columns: 1fr;
-  }
-  .winterblue-notes details:last-child {
-    grid-column: auto;
   }
   .winterblue-media img {
     max-height: none;
@@ -1138,24 +1156,42 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
           </h2>
           <p class="sentence">A large-scale contact sheet comprised of 125 individual photographs, recorded over 17 pre-dawn trips to the Camas Prairie.</p>
           <div class="rule" aria-hidden="true"></div>
-          <details class="winterblue-side-note winterblue-origin" open>
-            <summary>Field Note</summary>
-            <p>Winterblue was born from a winter search for Lisa's missing dog. For 11 days she and her community searched. Lisa slept in her car, searched in whiteouts, and met the full force of winter as fear, isolation, and overwhelming discomfort.</p>
-          </details>
+        </div>
+        <div class="winterblue-studies" aria-label="Winterblue field photographs">
+          <figure class="winterblue-study">
+            <button class="lightbox-trigger" type="button" data-lightbox-trigger>
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/2_3.jpg" alt="Winterblue field photograph 2.3." loading="lazy">
+            </button>
+          </figure>
+          <figure class="winterblue-study">
+            <button class="lightbox-trigger" type="button" data-lightbox-trigger>
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/4.jpg" alt="Winterblue field photograph 4." loading="lazy">
+            </button>
+          </figure>
+          <figure class="winterblue-study">
+            <button class="lightbox-trigger" type="button" data-lightbox-trigger>
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/IMG_0584.jpeg" alt="Winterblue field photograph IMG 0584." loading="lazy">
+            </button>
+          </figure>
+          <figure class="winterblue-study">
+            <button class="lightbox-trigger" type="button" data-lightbox-trigger>
+              <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/IMG_5818.JPEG" alt="Winterblue field photograph IMG 5818." loading="lazy">
+            </button>
+          </figure>
         </div>
         <figure class="winterblue-media" id="winterblue-work">
           <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/OBSERVATORY%20COMMISSION%20Photographs/Winterblue%20I_PREFUNCTION%20WALL.jpg" alt="Winterblue I contact sheet." loading="lazy">
           <figcaption class="photo-caption">LOWER LEVEL - PRE-FUNCTION WEST WALL 138" X 85"</figcaption>
         </figure>
         <div class="stack winterblue-notes">
+          <details class="winterblue-side-note winterblue-origin" open>
+            <summary>Field Note</summary>
+            <p>Winterblue was born from a winter search for Lisa's missing dog. For 11 days she and her community searched. Lisa slept in her car, searched in whiteouts, and met the full force of winter as fear, isolation, and overwhelming discomfort.</p>
+          </details>
           <details open>
             <summary>Project Note</summary>
             <p>Winterblue I is presented as a large-scale contact sheet — a grid of 125 individual photographs, one set of frames for each day spent on the Camas Prairie. Read together, the images form a record of sustained return: the same horizon, the same cold, observed across 17 sessions. Read individually, each frame holds a single moment of attention drawn from inside the season.</p>
             <p>The project carries regional character of embracing discomfort into winter atmosphere and emotional terrain. 17 trips between January and April to the Camas Prairie under sub-zero conditions turned darkness, cold, isolation, and grief into a field of attention. The work demonstrates the practice: entering difficulty deliberately, staying long enough for perception to shift, and returning with images shaped by that exposure.</p>
-          </details>
-          <details>
-            <summary>Work Details</summary>
-            <p>Location: Lower Level Pre-Function West Wall. Print Size: 138" W x 85" H (composed of 3 seamed panels). Framing & Fabrication: White painted maple wood (3-inch face, 2-inch depth) with museum non-glare glazing; Laumont Photographic, New York.</p>
           </details>
         </div>
       </div>
