@@ -580,13 +580,13 @@ h3 {
 }
 .gallery-item h3 { margin-top: 22px; }
 .craters-gallery {
-  grid-template-columns: repeat(2,minmax(0,1fr));
+  grid-template-columns: repeat(3,minmax(0,1fr));
   align-items: start;
-  width: min(100%, 620px);
+  width: min(100%, 940px);
   margin: clamp(112px, 14vw, 220px) auto 0;
-  gap: clamp(76px, 9vw, 150px) clamp(56px, 7vw, 112px);
+  gap: clamp(76px, 9vw, 150px) clamp(28px, 4vw, 64px);
 }
-.craters-gallery .gallery-item:nth-child(-n+2) img {
+.craters-gallery .gallery-item:nth-child(-n+3) img {
   width: 100%;
   aspect-ratio: 1274 / 1920;
   max-height: none;
@@ -594,7 +594,7 @@ h3 {
 }
 .craters-gallery .panorama-item {
   grid-column: 1 / -1;
-  max-width: 560px;
+  width: 100%;
   margin: 0 auto;
 }
 .craters-gallery .panorama-item img {
@@ -1128,6 +1128,12 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
             <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/OBSERVATORY%20COMMISSION%20Photographs/CRATERS_L1002418%20_GM%20WALL.jpg" alt="Craters L1002418." loading="lazy">
           </button>
           <figcaption class="photo-caption">MAIN LEVEL - GM WALL 52.5" X 79"</figcaption>
+        </article>
+        <article class="gallery-item">
+          <button class="lightbox-trigger" type="button" data-lightbox-trigger>
+            <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/OBSERVATORY%20COMMISSION%20Photographs/CRATERS_L1001569_EAST%20BAR.jpg" alt="Craters L1001569." loading="lazy">
+          </button>
+          <figcaption class="photo-caption">MAIN LEVEL - EAST BAR 41" X 62"</figcaption>
         </article>
         <article class="gallery-item">
           <button class="lightbox-trigger" type="button" data-lightbox-trigger>
