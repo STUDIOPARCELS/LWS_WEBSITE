@@ -13,3 +13,4 @@ SURFACE SURVEYS/
 WINTERBLUE/
 
 .vercel
+.env*.local
