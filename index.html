@@ -1274,7 +1274,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       </div>
       <div class="field-map-grid" aria-label="Field site maps">
         <figure class="field-map-card">
-          <button class="field-map-trigger" type="button" data-site-media-trigger aria-label="Open field site media">
+          <button class="field-map-trigger" type="button" data-site-media-trigger="craters" aria-label="Open Craters of the Moon field site media">
             <div class="field-map-frame">
               <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS%20MAPS.jpg" alt="Map showing The Observatory and Craters of the Moon National Monument." loading="lazy">
             </div>
@@ -1282,7 +1282,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
           <figcaption class="photo-caption">CRATERS OF THE MOON - THE OBSERVATORY</figcaption>
         </figure>
         <figure class="field-map-card">
-          <button class="field-map-trigger" type="button" data-site-media-trigger aria-label="Open Camas Prairie field site media">
+          <button class="field-map-trigger" type="button" data-site-media-trigger="camas" aria-label="Open Camas Prairie field site media">
             <div class="field-map-frame">
               <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CAMAS%20PRAIRIE.png" alt="Map showing The Observatory and the Camas Prairie." loading="lazy">
             </div>
@@ -1663,7 +1663,29 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
     <figcaption class="photo-caption" data-lightbox-caption></figcaption>
   </figure>
 </dialog>
-<dialog class="site-media-dialog" data-site-media-dialog aria-label="Winterblue field site media">
+<dialog class="site-media-dialog" data-site-media-dialog="craters" aria-label="Craters of the Moon field site media">
+  <div class="site-media-head">
+    <div class="stack">
+      <p class="eyebrow">CRATERS OF THE MOON FIELD SITE</p>
+      <h2 class="split-title">
+        <span class="line">CRATERS</span>
+        <span class="line"><span class="soft">SITE MEDIA</span></span>
+      </h2>
+    </div>
+    <p class="sentence">Field views from the volcanic surface of Craters of the Moon, paired with the aerial commission studies shown throughout the project.</p>
+  </div>
+  <div class="site-media-grid" aria-label="Craters of the Moon site media">
+    <figure class="site-media-card">
+      <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS/IMG_4479.JPEG" alt="Craters of the Moon field site image." loading="lazy">
+      <figcaption class="photo-caption">CRATERS OF THE MOON FIELD SITE</figcaption>
+    </figure>
+    <figure class="site-media-card">
+      <img src="https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/CRATERS/IMG_4519.JPG" alt="Craters of the Moon field site image." loading="lazy">
+      <figcaption class="photo-caption">CRATERS OF THE MOON FIELD SITE</figcaption>
+    </figure>
+  </div>
+</dialog>
+<dialog class="site-media-dialog" data-site-media-dialog="camas" aria-label="Winterblue field site media">
   <div class="site-media-head">
     <div class="stack">
       <p class="eyebrow">CAMAS PRAIRIE FIELD SITE</p>
@@ -2343,7 +2365,7 @@ if (!editorEnabled) {
 const lightbox = document.querySelector("[data-lightbox]");
 const lightboxImage = document.querySelector("[data-lightbox-image]");
 const lightboxCaption = document.querySelector("[data-lightbox-caption]");
-const siteMediaDialog = document.querySelector("[data-site-media-dialog]");
+const siteMediaDialogs = document.querySelectorAll("[data-site-media-dialog]");
 
 function closeLightbox() {
   if (!lightbox?.open) return;
@@ -2369,12 +2391,16 @@ lightbox?.addEventListener("click", (event) => {
 
 document.querySelectorAll("[data-site-media-trigger]").forEach((button) => {
   button.addEventListener("click", () => {
-    if (!siteMediaDialog?.open) siteMediaDialog?.showModal();
+    const target = button.getAttribute("data-site-media-trigger");
+    const dialog = document.querySelector(`[data-site-media-dialog="${target}"]`);
+    if (!dialog?.open) dialog?.showModal();
   });
 });
 
-siteMediaDialog?.addEventListener("click", (event) => {
-  if (event.target === siteMediaDialog) siteMediaDialog.close();
+siteMediaDialogs.forEach((dialog) => {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
 });
 
 const exportButton = document.querySelector("[data-export-edits]");
