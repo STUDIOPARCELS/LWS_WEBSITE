@@ -590,6 +590,9 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   background: rgba(0,0,0,.025);
   box-shadow: inset 0 -1px 0 var(--ink);
 }
+.editor-panel[hidden] {
+  display: none;
+}
 .editor-panel {
   position: fixed;
   right: clamp(18px, 3vw, 34px);
@@ -635,6 +638,16 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
   margin-top: 0;
   padding-top: 0;
   border-top: 0;
+}
+.section-jump {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.section-jump .editor-action {
+  margin-top: 0;
+  text-align: left;
 }
 .editor-action {
   display: inline-flex;
@@ -755,6 +768,16 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
 <aside class="editor-panel" aria-label="Preview controls">
   <details>
     <summary>Preview Controls</summary>
+    <p class="control-group">Section Edit</p>
+    <div class="section-jump" aria-label="Jump to section">
+      <button class="editor-action" type="button" data-jump-section="#top">Hero</button>
+      <button class="editor-action" type="button" data-jump-section="#intro">Intro</button>
+      <button class="editor-action" type="button" data-jump-section="#commission">Craters</button>
+      <button class="editor-action" type="button" data-jump-section="#winterblue">Winterblue</button>
+      <button class="editor-action" type="button" data-jump-section="#practice">Practice</button>
+      <button class="editor-action" type="button" data-jump-section="#luxuriate">Luxuriate</button>
+      <button class="editor-action" type="button" data-jump-section="#surface-surveys">Surface Surveys</button>
+    </div>
     <p class="control-group">Hero Type</p>
     <label class="control-row">
       <span>Title</span>
@@ -855,7 +878,14 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       <span>Color</span>
       <input type="color" value="#111111" data-selected-color>
     </label>
-    <button class="editor-action" type="button" data-toggle-selected-bold>Bold Selected Text</button>
+    <label class="control-row">
+      <span>Size</span>
+      <input type="range" min="10" max="72" step="1" value="16" data-selected-size>
+      <output>16px</output>
+    </label>
+    <button class="editor-action" type="button" data-toggle-selected-bold>Bold</button>
+    <button class="editor-action" type="button" data-toggle-selected-italic>Italic</button>
+    <button class="editor-action" type="button" data-apply-selected-size>Apply Size</button>
     <button class="editor-action" type="button" data-apply-selected-color>Apply Selected Color</button>
     <p class="control-group">Save</p>
     <p class="save-status" data-save-status>Autosaved locally. Use the local editor URL to save snapshots to disk.</p>
@@ -878,7 +908,7 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
     <div class="stack">
       <p class="eyebrow">THE OBSERVATORY SUN VALLEY, A VICEROY RESORT</p>
       <h1><span class="line">LUXURIATE</span><span class="line">IN <span class="soft">DISCOMFORT</span></span></h1>
-      <p class="sentence">5 commissioned works by LISA WOOD STUDIO bring together 2 Central Idaho field sites: the volcanic surface of Craters of the Moon National Monument and the winter expanse of the Camas Prairie before dawn.</p>
+      <p class="sentence">Five commissioned works by LISA WOOD STUDIO bring together two Central Idaho field sites: the volcanic surface of Craters of the Moon National Monument and the winter expanse of the Camas Prairie before dawn.</p>
       <div class="rule" aria-hidden="true"></div>
       <div class="actions">
         <a class="cta" href="#commission">VIEW COMMISSION</a>
@@ -886,8 +916,8 @@ details ul { margin: 16px 0 0; padding-left: 18px; }
       </div>
       <details open>
         <summary>Project Note</summary>
-        <p>Four works from Craters, Surface Surveys (2018), and one work from Winterblue (2023) connect two Idaho field sites — the Craters of the Moon National Monument and the Camas Prairie — through a practice shaped by discomfort, exposure, discovery, and sustained attention.</p>
-        <p>Volcanic surface, winter darkness, protected sky, and remote ground become a visual study of adventure and the reward of entering remote places.</p>
+        <p>Four works from Craters, Surface Surveys (2018), and one work from Winterblue (2023) connect neighboring terrain beneath a dark sky through a practice shaped by discomfort, exposure, sustained attention, and discovery.</p>
+        <p>Volcanic surface, winter darkness, protected sky, and remote ground become a visual study of adventure and the reward of experiencing remote places.</p>
       </details>
     </div>
     <figure class="hero-media">
@@ -1228,8 +1258,16 @@ const INTRO_IMAGE_MIGRATION_KEY = "observatory-content-preview-intro-image-v1";
 const INTRO_IMAGE_SUPABASE_MIGRATION_KEY = "observatory-content-preview-intro-image-supabase-v1";
 const WINTERBLUE_COPY_MIGRATION_KEY = "observatory-content-preview-winterblue-copy-v3";
 const INTRO_IMAGE_URL = "https://aawnkxnnrymqbysgimqj.supabase.co/storage/v1/object/public/LISA%20WOOD%20STUDIO%20WEBSITE/WINTERBLUE/IMG_9824.JPEG";
-const LOCAL_SAVE_URL = "http://127.0.0.1:4177/api/save-edits";
+const LOCAL_SAVE_URL = "http://127.0.0.1:4174/api/save-edits";
 const urlParams = new URLSearchParams(window.location.search);
+const editorEnabled = urlParams.has("edit") || ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const storageKeys = [
+  EDIT_STORAGE_KEY,
+  STYLE_STORAGE_KEY,
+  IMAGE_STORAGE_KEY,
+  HERO_LOCK_STORAGE_KEY,
+  CONTENT_LOCK_STORAGE_KEY
+];
 const editableSelector = [
   ".eyebrow",
   "h1",
@@ -1256,6 +1294,13 @@ function readStorage(key) {
 
 function saveStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+if (urlParams.has("reset-edits")) {
+  storageKeys.forEach((key) => localStorage.removeItem(key));
+  urlParams.delete("reset-edits");
+  urlParams.delete("edits-imported");
+  window.location.replace(`${window.location.pathname}?${urlParams.toString()}${window.location.hash}`);
 }
 
 async function importLatestSnapshotIfRequested() {
@@ -1285,6 +1330,10 @@ async function importLatestSnapshotIfRequested() {
 
 await importLatestSnapshotIfRequested();
 
+if (!editorEnabled) {
+  document.querySelector(".editor-panel")?.setAttribute("hidden", "");
+}
+
 const styleSettings = readStorage(STYLE_STORAGE_KEY);
 if (styleSettings["--intro-top-space"] === "46") {
   styleSettings["--intro-top-space"] = "24";
@@ -1296,6 +1345,7 @@ if (Number(styleSettings["--section-title-size"]) > 24) {
 }
 const styleControls = [...document.querySelectorAll("[data-style-var]")];
 const colorControls = [...document.querySelectorAll("[data-color-var]")];
+const sectionJumpButtons = [...document.querySelectorAll("[data-jump-section]")];
 const saveStatus = document.querySelector("[data-save-status]");
 let snapshotTimer;
 
@@ -1318,6 +1368,7 @@ function collectSnapshot() {
 }
 
 function saveSnapshotToServer() {
+  if (!editorEnabled) return;
   const saveUrl = /^https?:$/.test(window.location.protocol) ? "/api/save-edits" : LOCAL_SAVE_URL;
   clearTimeout(snapshotTimer);
   snapshotTimer = window.setTimeout(async () => {
@@ -1376,6 +1427,12 @@ colorControls.forEach((input) => {
 
   applyColor();
   input.addEventListener("input", applyColor);
+});
+
+sectionJumpButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelector(button.dataset.jumpSection)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 });
 
 const heroLockButton = document.querySelector("[data-lock-hero]");
@@ -1495,6 +1552,25 @@ const editables = [...document.querySelectorAll(editableSelector)]
   .filter((el) => !el.closest("nav") && !el.closest(".actions") && !el.closest(".editor-panel"));
 const contentLockButton = document.querySelector("[data-lock-copy]");
 
+function slugText(value) {
+  return value
+    .replace(/\s+/g, " ")
+    .replace(/[^a-z0-9 ]/gi, "")
+    .trim()
+    .toLowerCase()
+    .split(" ")
+    .slice(0, 8)
+    .join("-");
+}
+
+function stableEditableKey(el, index) {
+  const section = el.closest("section")?.id || "top";
+  const tag = el.tagName.toLowerCase();
+  const className = [...el.classList].filter((name) => !name.startsWith("editable")).join("-");
+  const textKey = slugText(el.textContent || "");
+  return [section, tag, className, textKey || index].filter(Boolean).join("-");
+}
+
 function contentIsLocked() {
   return localStorage.getItem(CONTENT_LOCK_STORAGE_KEY) === "true";
 }
@@ -1502,7 +1578,7 @@ function contentIsLocked() {
 function setContentLocked(locked) {
   localStorage.setItem(CONTENT_LOCK_STORAGE_KEY, locked ? "true" : "false");
   editables.forEach((el) => {
-    el.setAttribute("contenteditable", locked ? "false" : "true");
+    el.setAttribute("contenteditable", editorEnabled && !locked ? "true" : "false");
   });
   if (contentLockButton) {
     contentLockButton.textContent = locked ? "Unlock Copy Edits" : "Lock Copy Edits";
@@ -1520,11 +1596,19 @@ function saveEditableElement(el, message = "Text autosaved") {
 }
 
 editables.forEach((el, index) => {
-  const section = el.closest("section")?.id || "top";
-  const key = `${section}-${index}`;
+  const legacySection = el.closest("section")?.id || "top";
+  const legacyKey = `${legacySection}-${index}`;
+  const key = stableEditableKey(el, index);
   el.dataset.editId = key;
-  if (inlineEdits[key]) el.innerHTML = inlineEdits[key];
-  el.setAttribute("contenteditable", "true");
+  if (inlineEdits[key]) {
+    el.innerHTML = inlineEdits[key];
+  } else if (inlineEdits[legacyKey]) {
+    inlineEdits[key] = inlineEdits[legacyKey];
+    delete inlineEdits[legacyKey];
+    el.innerHTML = inlineEdits[key];
+    saveStorage(EDIT_STORAGE_KEY, inlineEdits);
+  }
+  el.setAttribute("contenteditable", editorEnabled ? "true" : "false");
   el.setAttribute("spellcheck", "true");
   el.addEventListener("input", () => {
     saveEditableElement(el);
@@ -1555,43 +1639,99 @@ document.addEventListener("selectionchange", () => {
 const selectedColorInput = document.querySelector("[data-selected-color]");
 const selectedColorButton = document.querySelector("[data-apply-selected-color]");
 const selectedBoldButton = document.querySelector("[data-toggle-selected-bold]");
+const selectedItalicButton = document.querySelector("[data-toggle-selected-italic]");
+const selectedSizeInput = document.querySelector("[data-selected-size]");
+const selectedSizeButton = document.querySelector("[data-apply-selected-size]");
+
+function restoreSelection() {
+  if (!savedSelectionRange || savedSelectionRange.collapsed) {
+    markSaved("Select text first");
+    return null;
+  }
+
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(savedSelectionRange);
+  const container = selection.anchorNode?.nodeType === Node.ELEMENT_NODE
+    ? selection.anchorNode
+    : selection.anchorNode?.parentElement;
+  return container?.closest?.('[contenteditable="true"]') || null;
+}
+
+function saveCurrentSelection(message) {
+  const selection = window.getSelection();
+  const container = selection.anchorNode?.nodeType === Node.ELEMENT_NODE
+    ? selection.anchorNode
+    : selection.anchorNode?.parentElement;
+  const editable = container?.closest?.('[contenteditable="true"]');
+  if (editable) saveEditableElement(editable, message);
+}
+
+function normalizeFontSizeMarkup(editable, size) {
+  editable.querySelectorAll('font[size="7"]').forEach((font) => {
+    const span = document.createElement("span");
+    span.style.fontSize = `${size}px`;
+    span.innerHTML = font.innerHTML;
+    font.replaceWith(span);
+  });
+}
+
+if (selectedSizeInput) {
+  const selectedSizeOutput = selectedSizeInput.closest(".control-row")?.querySelector("output");
+  const updateSelectedSizeOutput = () => {
+    if (selectedSizeOutput) selectedSizeOutput.textContent = `${selectedSizeInput.value}px`;
+  };
+  updateSelectedSizeOutput();
+  selectedSizeInput.addEventListener("input", updateSelectedSizeOutput);
+}
+
 if (selectedColorButton && selectedColorInput) {
   selectedColorButton.addEventListener("click", () => {
-    if (!savedSelectionRange) {
-      markSaved("Select text first");
-      return;
-    }
-
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(savedSelectionRange);
+    if (!restoreSelection()) return;
     document.execCommand("foreColor", false, selectedColorInput.value);
-
-    const container = selection.anchorNode?.nodeType === Node.ELEMENT_NODE
-      ? selection.anchorNode
-      : selection.anchorNode?.parentElement;
-    const editable = container?.closest?.('[contenteditable="true"]');
-    if (editable) saveEditableElement(editable, "Selected color saved");
+    saveCurrentSelection("Selected color saved");
   });
 }
 if (selectedBoldButton) {
   selectedBoldButton.addEventListener("click", () => {
-    if (!savedSelectionRange || savedSelectionRange.collapsed) {
-      markSaved("Select text first");
-      return;
-    }
-
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(savedSelectionRange);
+    if (!restoreSelection()) return;
     document.execCommand("bold");
-
-    const container = selection.anchorNode?.nodeType === Node.ELEMENT_NODE
-      ? selection.anchorNode
-      : selection.anchorNode?.parentElement;
-    const editable = container?.closest?.('[contenteditable="true"]');
-    if (editable) saveEditableElement(editable, "Bold text saved");
+    saveCurrentSelection("Bold text saved");
   });
+}
+if (selectedItalicButton) {
+  selectedItalicButton.addEventListener("click", () => {
+    if (!restoreSelection()) return;
+    document.execCommand("italic");
+    saveCurrentSelection("Italic text saved");
+  });
+}
+if (selectedSizeButton && selectedSizeInput) {
+  selectedSizeButton.addEventListener("click", () => {
+    const editable = restoreSelection();
+    if (!editable) return;
+    document.execCommand("fontSize", false, "7");
+    normalizeFontSizeMarkup(editable, selectedSizeInput.value);
+    saveEditableElement(editable, "Selected size saved");
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (!editorEnabled || !(event.ctrlKey || event.metaKey)) return;
+  const key = event.key.toLowerCase();
+  if (!["b", "i"].includes(key)) return;
+  window.setTimeout(() => {
+    const selection = window.getSelection();
+    const container = selection?.anchorNode?.nodeType === Node.ELEMENT_NODE
+      ? selection.anchorNode
+      : selection?.anchorNode?.parentElement;
+    const editable = container?.closest?.('[contenteditable="true"]');
+    if (editable) saveEditableElement(editable, key === "b" ? "Bold text saved" : "Italic text saved");
+  }, 0);
+});
+
+if (!editorEnabled) {
+  setContentLocked(true);
 }
 
 const exportButton = document.querySelector("[data-export-edits]");
@@ -1612,7 +1752,7 @@ if (exportButton) {
 }
 
 document.body.classList.add("editable-ready");
-markSaved(/^https?:$/.test(window.location.protocol) ? "Local editor ready" : "File preview ready");
+markSaved(editorEnabled ? "Local editor ready" : "Preview ready");
 saveSnapshotToServer();
 </script>
 </body>
